@@ -122,7 +122,10 @@ router.post("/login", async (req, res, next) => {
 
     // aqui crearemos una sesion activa del usuario
     req.session.user = foundUser; // crear una sesion activa con este usuario
-  
+
+    // req.app.locals es donde guardamos variables globales accesibles desde handlebars
+    req.app.locals.userIsActive = true;
+
     // ... lo ultimo
     res.redirect("/profile")
 
@@ -132,10 +135,11 @@ router.post("/login", async (req, res, next) => {
 })
 
 // POST "/auth/logout" => cerra la session del usuario
-router.post("/logout", async (req, res, next) => {
+router.post("/logout", (req, res, next) => {
 
-  // 1. cerrar session
-  await req.session.destroy()
+  // 1. cerrar session 
+  req.session.destroy()
+  req.app.locals.userIsActive = false;
 
   // 2. redireccionar al usuario
   res.redirect("/")
