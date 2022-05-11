@@ -121,7 +121,7 @@ router.post("/login", async (req, res, next) => {
     // el usuario es quien dice ser
 
     // aqui crearemos una sesion activa del usuario
-    req.session.user = foundUser;
+    req.session.user = foundUser; // crear una sesion activa con este usuario
   
     // ... lo ultimo
     res.redirect("/profile")
@@ -129,6 +129,17 @@ router.post("/login", async (req, res, next) => {
   } catch(err) {
     next(err)
   }
+})
+
+// POST "/auth/logout" => cerra la session del usuario
+router.post("/logout", async (req, res, next) => {
+
+  // 1. cerrar session
+  await req.session.destroy()
+
+  // 2. redireccionar al usuario
+  res.redirect("/")
+
 })
 
 
