@@ -78,6 +78,58 @@ router.get("/login", (req, res, next) => {
 })
 
 // POST "/auth/login" => recibir las credenciales del usuario y validarlo
+router.post("/login", async (req, res, next) => {
+
+  console.log(req.body)
+  const { email, password } = req.body
+
+  // VALIDADORES DE BACKEND
+
+  // if (email === "" || password === "" ) {
+  if (!email || !password ) {
+    res.render("auth/login", {
+      errorMessage: "debes rellenar todos los campos",
+    })
+    return; // hasta aqui llega mi ruta
+  }
+
+
+  try {
+    
+    // validar que el usuario exista en mi DB
+    const foundUser = await UserModel.findOne({ email: email })
+    // if (foundUser === null) {
+    if (!foundUser) {
+      res.render("auth/login", {
+        errorMessage: "lo siento, el usuario no está registrado",
+      })
+      return; // hasta aqui llega mi ruta
+    }
+    console.log(foundUser)
+
+    // VALIDAR AL USUARIO
+    const passwordCheck = await bcryptjs.compare(password, foundUser.password)
+    console.log(passwordCheck) // true o false
+    if (!passwordCheck) {
+      res.render("auth/login", {
+        errorMessage: "contraseña invalida",
+      })
+      return; // hasta aqui llega mi ruta
+    }
+
+    // a partir de aqui, hemos autenticado al usuario
+    // el usuario es quien dice ser
+
+    // aqui crearemos una sesion activa del usuario
+    req.session.user = foundUser;
+  
+    // ... lo ultimo
+    res.redirect("/profile")
+
+  } catch(err) {
+    next(err)
+  }
+})
 
 
 module.exports = router;
