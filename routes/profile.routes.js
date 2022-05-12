@@ -1,7 +1,10 @@
 const router = require("express").Router();
 
-const isLoggedIn = require("../middlewares/isLoggedIn.js")
-const isAdmin = require("../middlewares/isAdmin")
+// const isLoggedIn = require("../middlewares/isLoggedIn.js")
+// const isAdmin = require("../middlewares/isAdmin")
+
+const { isLoggedIn, isAdmin } = require("../middlewares/auth-middlewares")
+
 
 // aqui van nuestras rutas privadas
 router.get("/", isLoggedIn, (req, res, next) => {
